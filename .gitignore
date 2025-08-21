@@ -1,5 +1,4 @@
 # Ignore my environment
 venv/
 env/
-.my_env/
-.\my_env\Scripts\Activate.ps1
+my_env/
