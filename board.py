@@ -36,6 +36,15 @@ class Knight(pygame.sprite.Sprite):
         row = int((pos[1] - self.board_rect.top) // case_h)
 
         # Centre exact de la case
+        if col > 3:
+            col = 3
+        if col < 0:
+            col = 0
+        if row > 3:
+            row = 3
+        if row < 0:
+            row = 0
+
         self.rect.center = board_array[row][col]
     
     def mouse_detection(self):
@@ -52,10 +61,7 @@ class Knight(pygame.sprite.Sprite):
             self.dragging = False
 
         if self.dragging:
-            x, y = mouse_pos
-            # Restriction à la zone du plateau
-            if self.board_rect.left < x < self.board_rect.right and self.board_rect.top < y < self.board_rect.bottom:
-                self.rect.center = mouse_pos
+            self.rect.center = mouse_pos
     
 
     def update(self):
