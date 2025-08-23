@@ -8,14 +8,13 @@ def getCaseSize(board):
     return width, height
 
 def boardToArray():
-    case_w, case_h = getCaseSize(scaled_board)
     board_array = [[None for _ in range(4)] for _ in range(4)]
 
-    for i in range (4):
-        for j in range(4):
-            col = board_rect.left + i * case_w + case_w // 2
-            row = board_rect.top + j * case_h + case_h // 2
-            board_array[i][j] = (row, col)
+    for row in range (4):
+        for col in range(4):
+            x = board_rect.left + row * case_w + case_w // 2
+            y = board_rect.top + col * case_h + case_h // 2
+            board_array[row][col] = (x, y)
     return board_array
 
 class Knight(pygame.sprite.Sprite):
@@ -24,28 +23,44 @@ class Knight(pygame.sprite.Sprite):
         self.surface = pygame.image.load('sprites/knight.png').convert_alpha()
         self.knight_width, self.knight_height = getCaseSize(scaled_board)
         self.image = pygame.transform.scale(self.surface, ( self.knight_width, self.knight_height))
-        self.rect = self.image.get_rect(center = board_array[0][0])
+        self.x = 0
+        self.y = 0
+        self.rect = self.image.get_rect(center = board_array[self.x][self.y])
         self.dragging = False
         self.board_rect = board_rect
 
     def snap_to_grid(self, pos):
         """Aligne le chevalier au centre de la case la plus proche"""
-        case_w, case_h = getCaseSize(scaled_board)
 
-        col = int((pos[0] - self.board_rect.left) // case_w)
-        row = int((pos[1] - self.board_rect.top) // case_h)
+        self.x = int((pos[0] - self.board_rect.left) // case_w)
+        self.y = int((pos[1] - self.board_rect.top) // case_h)
 
-        # Centre exact de la case
-        if col > 3:
-            col = 3
-        if col < 0:
-            col = 0
-        if row > 3:
-            row = 3
-        if row < 0:
-            row = 0
 
-        self.rect.center = board_array[row][col]
+        #Border Limits
+        if self.x > 3:
+            self.x = 3
+        if self.x < 0:
+            self.x = 0
+        if self.y > 3:
+            self.y = 3
+        if self.y < 0:
+            self.y = 0
+
+        self.rect.center = board_array[self.x][self.y]
+
+    def legal_moves(self):
+
+        # Récupère la position du cavalier en indices de grille
+        col = self.x
+        row = self.y
+
+        legal = moves.knightMoves(row, col)
+
+        for ny, nx in legal:
+            pixel_x = self.board_rect.left + nx * case_w
+            pixel_y = self.board_rect.top + ny * case_h
+            pygame.draw.rect(screen, (255, 0, 0), pygame.Rect(pixel_x, pixel_y, case_w, case_h), 5)
+
     
     def mouse_detection(self):
         mouse_pos = pygame.mouse.get_pos()
@@ -66,6 +81,7 @@ class Knight(pygame.sprite.Sprite):
 
     def update(self):
         self.mouse_detection()
+        self.legal_moves()
         
 
 #Pygame initialization
@@ -82,6 +98,8 @@ scaled_board = pygame.transform.scale(board_surface, (500, 500))
 
 board_rect = scaled_board.get_rect(center = (screen.get_width()//2, screen.get_height()//2))
 
+case_w, case_h= getCaseSize(scaled_board)
+case_size = case_w * case_h
 board_array = boardToArray()
 
 #Groups
