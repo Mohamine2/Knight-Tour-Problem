@@ -17,6 +17,16 @@ def boardToArray():
             board_array[row][col] = (x, y)
     return board_array
 
+#Mark the visited cases
+def draw_visited():
+    for row in range(4):
+        for col in range(4):
+            if state_array[row][col] == 1:
+                pixel_x = board_rect.left + row * case_w
+                pixel_y = board_rect.top + col * case_h
+                pygame.draw.rect(screen, (0, 255, 0), pygame.Rect(pixel_x, pixel_y, case_w, case_h), 5)
+
+
 class Knight(pygame.sprite.Sprite):
     def __init__(self, board_rect):
         super().__init__()
@@ -126,6 +136,7 @@ while True:
     screen.blit(scaled_board,board_rect)
     knight.draw(screen)
     knight.update()
+    draw_visited()
 
     pygame.display.update()
     clock.tick(60)
