@@ -25,16 +25,22 @@ class Knight(pygame.sprite.Sprite):
         self.image = pygame.transform.scale(self.surface, ( self.knight_width, self.knight_height))
         self.x = 0
         self.y = 0
+        state_array[self.x][self.y] = 1
         self.rect = self.image.get_rect(center = board_array[self.x][self.y])
         self.dragging = False
         self.board_rect = board_rect
 
     def snap_to_grid(self, pos):
-        """Aligne le chevalier au centre de la case la plus proche"""
+        
+        #Find the center of the nearest case
+        x = int((pos[0] - self.board_rect.left) // case_w)
+        y = int((pos[1] - self.board_rect.top) // case_h)
 
-        self.x = int((pos[0] - self.board_rect.left) // case_w)
-        self.y = int((pos[1] - self.board_rect.top) // case_h)
-
+        #Check if it is a legal case
+        if (x,y) in self.legal:
+            self.x = x
+            self.y = y
+            state_array[x][y] = 1
 
         #Border Limits
         if self.x > 3:
@@ -54,9 +60,9 @@ class Knight(pygame.sprite.Sprite):
         col = self.x
         row = self.y
 
-        legal = moves.knightMoves(row, col)
+        self.legal = moves.knightMoves(row, col, state_array)
 
-        for ny, nx in legal:
+        for nx, ny in self.legal:
             pixel_x = self.board_rect.left + nx * case_w
             pixel_y = self.board_rect.top + ny * case_h
             pygame.draw.rect(screen, (255, 0, 0), pygame.Rect(pixel_x, pixel_y, case_w, case_h), 5)
@@ -101,6 +107,10 @@ board_rect = scaled_board.get_rect(center = (screen.get_width()//2, screen.get_h
 case_w, case_h= getCaseSize(scaled_board)
 case_size = case_w * case_h
 board_array = boardToArray()
+
+#State array (0 = 'normal case' 1 = 'visited case')
+state_array = board = [[0 for _ in range(4)] for _ in range(4)]
+
 
 #Groups
 knight = pygame.sprite.GroupSingle()
