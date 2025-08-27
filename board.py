@@ -1,6 +1,22 @@
 import pygame
 import moves
 
+def press_button(rect, size):
+        mouse_pos = pygame.mouse.get_pos()
+        mouse_pressed = pygame.mouse.get_pressed()
+
+        if rect[0].collidepoint(mouse_pos) and mouse_pressed[0]:
+            return True, size[0]
+        
+        elif rect[1].collidepoint(mouse_pos) and mouse_pressed[0]:
+            return True, size[1]
+
+        elif rect[2].collidepoint(mouse_pos) and mouse_pressed[0]:
+            return True, size[2]
+        
+        else:
+            return False, None
+
 def getCaseSize(board):
     width, height = board.get_size()
     width /= 4
@@ -105,26 +121,8 @@ pygame.init()
 screen = pygame.display.set_mode((600,600))
 pygame.display.set_caption('Knight Tour Problem')
 clock = pygame.time.Clock()
-
-background_surface = pygame.image.load('sprites/background.png')
-
-#Board sprite
-board_surface = pygame.image.load('sprites/4x4.png').convert()
-scaled_board = pygame.transform.scale(board_surface, (500, 500))
-
-board_rect = scaled_board.get_rect(center = (screen.get_width()//2, screen.get_height()//2))
-
-case_w, case_h= getCaseSize(scaled_board)
-case_size = case_w * case_h
-board_array = boardToArray()
-
-#State array (0 = 'normal case' 1 = 'visited case')
-state_array = board = [[0 for _ in range(4)] for _ in range(4)]
-
-
-#Groups
-knight = pygame.sprite.GroupSingle()
-knight.add(Knight(board_rect))
+game_active = False
+font = pygame.font.Font('font/Pixeltype.ttf', 50)
 
 while True:
     for event in pygame.event.get():
@@ -132,11 +130,58 @@ while True:
             pygame.quit()
             exit()
 
-    screen.blit(background_surface, (0,0))
-    screen.blit(scaled_board,board_rect)
-    knight.draw(screen)
-    knight.update()
-    draw_visited()
+    if game_active:
+        screen.blit(background_surface, (0,0))
+        screen.blit(scaled_board,board_rect)
+        knight.draw(screen)
+        knight.update()
+        draw_visited()
+    else:
+        screen.fill((94,129,162))
+        title_text = font.render('KNIGHT TOUR PROBLEM', False, 'Black')
+        title_rect = title_text.get_rect(center = (300,150))
+        screen.blit(title_text, title_rect)
+
+        size_text = font.render ('Choose the chessboard size', False, 'Blue')
+        size_rect = size_text.get_rect(center = (300,200))
+        screen.blit(size_text, size_rect)
+
+
+        rect_array = []
+        size_array = []
+        rect_gap = 230
+        size_gap = 260
+        for i in range(3):
+            rect_array.append(pygame.draw.rect(screen, 'Black', pygame.Rect(150, rect_gap, 300, 50), 5))
+            size_text = font.render (f'{i+3}x{i+3}', False, 'Blue')
+            size_rect = size_text.get_rect(center = (300,size_gap))
+            size_array.append(f'{i+3}x{i+3}')
+            screen.blit(size_text, size_rect)
+            rect_gap += 70
+            size_gap += 70
+
+        game_active, size = press_button(rect_array, size_array)
+
+        if game_active:
+            background_surface = pygame.image.load('sprites/background.png')
+
+            #Board sprite
+            board_surface = pygame.image.load(f'sprites/{size}.png').convert()
+            scaled_board = pygame.transform.scale(board_surface, (500, 500))
+
+            board_rect = scaled_board.get_rect(center = (screen.get_width()//2, screen.get_height()//2))
+
+            case_w, case_h= getCaseSize(scaled_board)
+            case_size = case_w * case_h
+            board_array = boardToArray()
+
+            #State array (0 = 'normal case' 1 = 'visited case')
+            state_array = board = [[0 for _ in range(4)] for _ in range(4)]
+
+            #Groups
+            knight = pygame.sprite.GroupSingle()
+            knight.add(Knight(board_rect))
+
 
     pygame.display.update()
     clock.tick(60)
