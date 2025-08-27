@@ -6,28 +6,28 @@ def press_button(rect, size):
         mouse_pressed = pygame.mouse.get_pressed()
 
         if rect[0].collidepoint(mouse_pos) and mouse_pressed[0]:
-            return True, size[0]
+            return True, size[0][0]
         
         elif rect[1].collidepoint(mouse_pos) and mouse_pressed[0]:
-            return True, size[1]
+            return True, size[1][0]
 
         elif rect[2].collidepoint(mouse_pos) and mouse_pressed[0]:
-            return True, size[2]
+            return True, size[2][0]
         
         else:
             return False, None
 
-def getCaseSize(board):
+def getCaseSize(board, size):
     width, height = board.get_size()
-    width /= 4
-    height /= 4
+    width /= size
+    height /= size
     return width, height
 
-def boardToArray():
-    board_array = [[None for _ in range(4)] for _ in range(4)]
+def boardToArray(size):
+    board_array = [[None for _ in range(size)] for _ in range(size)]
 
-    for row in range (4):
-        for col in range(4):
+    for row in range (size):
+        for col in range(size):
             x = board_rect.left + row * case_w + case_w // 2
             y = board_rect.top + col * case_h + case_h // 2
             board_array[row][col] = (x, y)
@@ -47,7 +47,7 @@ class Knight(pygame.sprite.Sprite):
     def __init__(self, board_rect):
         super().__init__()
         self.surface = pygame.image.load('sprites/knight.png').convert_alpha()
-        self.knight_width, self.knight_height = getCaseSize(scaled_board)
+        self.knight_width, self.knight_height = getCaseSize(scaled_board, size)
         self.image = pygame.transform.scale(self.surface, ( self.knight_width, self.knight_height))
         self.x = 0
         self.y = 0
@@ -69,12 +69,12 @@ class Knight(pygame.sprite.Sprite):
             state_array[x][y] = 1
 
         #Border Limits
-        if self.x > 3:
-            self.x = 3
+        if self.x > size - 1:
+            self.x = size - 1
         if self.x < 0:
             self.x = 0
-        if self.y > 3:
-            self.y = 3
+        if self.y > size - 1:
+            self.y = size - 1
         if self.y < 0:
             self.y = 0
 
@@ -86,7 +86,7 @@ class Knight(pygame.sprite.Sprite):
         col = self.x
         row = self.y
 
-        self.legal = moves.knightMoves(row, col, state_array)
+        self.legal = moves.knightMoves(row, col, state_array, size)
 
         for nx, ny in self.legal:
             pixel_x = self.board_rect.left + nx * case_w
@@ -162,21 +162,24 @@ while True:
 
         game_active, size = press_button(rect_array, size_array)
 
+
         if game_active:
             background_surface = pygame.image.load('sprites/background.png')
 
             #Board sprite
-            board_surface = pygame.image.load(f'sprites/{size}.png').convert()
+            board_surface = pygame.image.load(f'sprites/{size}x{size}.png').convert()
             scaled_board = pygame.transform.scale(board_surface, (500, 500))
+
+            size = int(size)
 
             board_rect = scaled_board.get_rect(center = (screen.get_width()//2, screen.get_height()//2))
 
-            case_w, case_h= getCaseSize(scaled_board)
+            case_w, case_h = getCaseSize(scaled_board, size)
             case_size = case_w * case_h
-            board_array = boardToArray()
+            board_array = boardToArray(size)
 
             #State array (0 = 'normal case' 1 = 'visited case')
-            state_array = board = [[0 for _ in range(4)] for _ in range(4)]
+            state_array = board = [[0 for _ in range(size)] for _ in range(size)]
 
             #Groups
             knight = pygame.sprite.GroupSingle()
