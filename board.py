@@ -139,7 +139,7 @@ while True:
     else:
         screen.fill((94,129,162))
         title_text = font.render('KNIGHT TOUR PROBLEM', False, 'Black')
-        title_rect = title_text.get_rect(center = (300,150))
+        title_rect = title_text.get_rect(center = (300,130))
         screen.blit(title_text, title_rect)
 
         size_text = font.render ('Choose the chessboard size', False, 'Blue')
@@ -151,11 +151,11 @@ while True:
         size_array = []
         rect_gap = 230
         size_gap = 260
-        for i in range(3):
+        for i in range(3, 6):
             rect_array.append(pygame.draw.rect(screen, 'Black', pygame.Rect(150, rect_gap, 300, 50), 5))
-            size_text = font.render (f'{i+3}x{i+3}', False, 'Blue')
+            size_text = font.render (f'{i}x{i}', False, 'Blue')
             size_rect = size_text.get_rect(center = (300,size_gap))
-            size_array.append(f'{i+3}x{i+3}')
+            size_array.append(f'{i}x{i}')
             screen.blit(size_text, size_rect)
             rect_gap += 70
             size_gap += 70
