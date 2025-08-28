@@ -34,9 +34,9 @@ def boardToArray(size):
     return board_array
 
 #Mark the visited cases
-def draw_visited():
-    for row in range(4):
-        for col in range(4):
+def draw_visited(size):
+    for row in range(size):
+        for col in range(size):
             if state_array[row][col] == 1:
                 pixel_x = board_rect.left + row * case_w
                 pixel_y = board_rect.top + col * case_h
@@ -55,6 +55,38 @@ class Knight(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(center = board_array[self.x][self.y])
         self.dragging = False
         self.board_rect = board_rect
+        #self.moves_rect = []
+
+    def legal_moves(self):
+
+        # Récupère la position du cavalier en indices de grille
+        col = self.x
+        row = self.y
+
+        self.legal = moves.knightMoves(row, col, state_array, size)
+
+        if self.legal:
+            for nx, ny in self.legal:
+                pixel_x = self.board_rect.left + nx * case_w
+                pixel_y = self.board_rect.top + ny * case_h
+                self.moves_rect.append(pygame.Rect(pixel_x, pixel_y, case_w, case_h))
+                pygame.draw.rect(screen, (255, 0, 0), pygame.Rect(pixel_x, pixel_y, case_w, case_h), 5)     
+
+    def drag_and_drop(self):
+        mouse_pos = pygame.mouse.get_pos()
+        mouse_pressed = pygame.mouse.get_pressed()
+
+        if self.rect.collidepoint(mouse_pos) and mouse_pressed[0]:
+            self.dragging = True
+
+        if not mouse_pressed[0] and self.dragging:
+            # Quand on relâche → snap sur la case
+            
+            self.snap_to_grid(mouse_pos)
+            self.dragging = False
+
+        if self.dragging:
+            self.rect.center = mouse_pos
 
     def snap_to_grid(self, pos):
         
@@ -80,40 +112,22 @@ class Knight(pygame.sprite.Sprite):
 
         self.rect.center = board_array[self.x][self.y]
 
-    def legal_moves(self):
-
-        # Récupère la position du cavalier en indices de grille
-        col = self.x
-        row = self.y
-
-        self.legal = moves.knightMoves(row, col, state_array, size)
-
-        for nx, ny in self.legal:
-            pixel_x = self.board_rect.left + nx * case_w
-            pixel_y = self.board_rect.top + ny * case_h
-            pygame.draw.rect(screen, (255, 0, 0), pygame.Rect(pixel_x, pixel_y, case_w, case_h), 5)
-
-    
-    def mouse_detection(self):
+    def touch_to_move(self):
         mouse_pos = pygame.mouse.get_pos()
         mouse_pressed = pygame.mouse.get_pressed()
 
-        if self.rect.collidepoint(mouse_pos) and mouse_pressed[0]:
-            self.dragging = True
-
-        if not mouse_pressed[0] and self.dragging:
-            # Quand on relâche → snap sur la case
-            
-            self.snap_to_grid(mouse_pos)
-            self.dragging = False
-
-        if self.dragging:
-            self.rect.center = mouse_pos
+        if self.moves_rect[0].collidepoint(mouse_pos) and mouse_pressed[0]: 
+            x,y = self.legal[0]
+            self.x = x
+            self.y = y
+            state_array[x][y] = 1
+            self.rect.center = board_array[self.x][self.y]
     
 
     def update(self):
-        self.mouse_detection()
         self.legal_moves()
+        self.drag_and_drop()
+        #self.touch_to_move()
         
 
 #Pygame initialization
@@ -121,7 +135,7 @@ pygame.init()
 screen = pygame.display.set_mode((600,600))
 pygame.display.set_caption('Knight Tour Problem')
 clock = pygame.time.Clock()
-game_active = False
+running = False
 font = pygame.font.Font('font/Pixeltype.ttf', 50)
 
 while True:
@@ -130,12 +144,12 @@ while True:
             pygame.quit()
             exit()
 
-    if game_active:
+    if running:
         screen.blit(background_surface, (0,0))
         screen.blit(scaled_board,board_rect)
         knight.draw(screen)
         knight.update()
-        draw_visited()
+        draw_visited(size)
     else:
         screen.fill((94,129,162))
         title_text = font.render('KNIGHT TOUR PROBLEM', False, 'Black')
@@ -160,10 +174,10 @@ while True:
             rect_gap += 70
             size_gap += 70
 
-        game_active, size = press_button(rect_array, size_array)
+        running, size = press_button(rect_array, size_array)
 
 
-        if game_active:
+        if running:
             background_surface = pygame.image.load('sprites/background.png')
 
             #Board sprite
