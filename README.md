@@ -1,4 +1,4 @@
-# ♟️ Knight-Tour-Problem - Visualization with Python & PyGame
+# ♘ Knight-Tour-Problem - Visualization with Python & PyGame
 
 The **Knight Tour's problem** (also known as polygraphy, knight algorithm, or Euler knight) is a mathematical-logical problem based on the movements of the knight in chess: a knight starting from any square must visit every square without returning there.
 
