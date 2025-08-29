@@ -1,22 +1,6 @@
 import pygame
 import moves
 
-def press_button(rect, size):
-        mouse_pos = pygame.mouse.get_pos()
-        mouse_pressed = pygame.mouse.get_pressed()
-
-        if rect[0].collidepoint(mouse_pos) and mouse_pressed[0]:
-            return True, size[0][0]
-        
-        elif rect[1].collidepoint(mouse_pos) and mouse_pressed[0]:
-            return True, size[1][0]
-
-        elif rect[2].collidepoint(mouse_pos) and mouse_pressed[0]:
-            return True, size[2][0]
-        
-        else:
-            return False, None
-
 def getCaseSize(board, size):
     width, height = board.get_size()
     width /= size
@@ -58,7 +42,7 @@ class Knight(pygame.sprite.Sprite):
 
     def legal_moves(self):
 
-        # Récupère la position du cavalier en indices de grille
+        #Get the knight's position in board_array
         col = self.x
         row = self.y
 
@@ -77,8 +61,6 @@ class Knight(pygame.sprite.Sprite):
             self.dragging = True
 
         if not mouse_pressed[0] and self.dragging:
-            # Quand on relâche → snap sur la case
-            
             self.snap_to_grid(mouse_pos)
             self.dragging = False
 
@@ -157,9 +139,6 @@ while True:
             screen.blit(size_text, size_rect)
             rect_gap += 70
             size_gap += 70
-
-        running, size = press_button(rect_array, size_array)
-
 
         if running:
             background_surface = pygame.image.load('sprites/background.png')
