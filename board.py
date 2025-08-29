@@ -55,7 +55,6 @@ class Knight(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(center = board_array[self.x][self.y])
         self.dragging = False
         self.board_rect = board_rect
-        #self.moves_rect = []
 
     def legal_moves(self):
 
@@ -65,12 +64,10 @@ class Knight(pygame.sprite.Sprite):
 
         self.legal = moves.knightMoves(row, col, state_array, size)
 
-        if self.legal:
-            for nx, ny in self.legal:
-                pixel_x = self.board_rect.left + nx * case_w
-                pixel_y = self.board_rect.top + ny * case_h
-                self.moves_rect.append(pygame.Rect(pixel_x, pixel_y, case_w, case_h))
-                pygame.draw.rect(screen, (255, 0, 0), pygame.Rect(pixel_x, pixel_y, case_w, case_h), 5)     
+        for nx, ny in self.legal:
+            pixel_x = self.board_rect.left + nx * case_w
+            pixel_y = self.board_rect.top + ny * case_h
+            pygame.draw.rect(screen, (255, 0, 0), pygame.Rect(pixel_x, pixel_y, case_w, case_h), 5)     
 
     def drag_and_drop(self):
         mouse_pos = pygame.mouse.get_pos()
@@ -111,23 +108,10 @@ class Knight(pygame.sprite.Sprite):
             self.y = 0
 
         self.rect.center = board_array[self.x][self.y]
-
-    def touch_to_move(self):
-        mouse_pos = pygame.mouse.get_pos()
-        mouse_pressed = pygame.mouse.get_pressed()
-
-        if self.moves_rect[0].collidepoint(mouse_pos) and mouse_pressed[0]: 
-            x,y = self.legal[0]
-            self.x = x
-            self.y = y
-            state_array[x][y] = 1
-            self.rect.center = board_array[self.x][self.y]
     
-
     def update(self):
         self.legal_moves()
         self.drag_and_drop()
-        #self.touch_to_move()
         
 
 #Pygame initialization
