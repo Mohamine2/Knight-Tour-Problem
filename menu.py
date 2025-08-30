@@ -8,13 +8,13 @@ def press_button(rect, size):
         mouse_pressed = pygame.mouse.get_pressed()
 
         if rect[0].collidepoint(mouse_pos) and mouse_pressed[0]:
-            return True, size[0][0]
+            return True, size[0]
         
         elif rect[1].collidepoint(mouse_pos) and mouse_pressed[0]:
-            return True, size[1][0]
+            return True, size[1]
 
         elif rect[2].collidepoint(mouse_pos) and mouse_pressed[0]:
-            return True, size[2][0]
+            return True, size[2]
         
         else:
             return False, None
@@ -37,7 +37,7 @@ def menu_display(screen,):
         rect_array.append(pygame.draw.rect(screen, 'Black', pygame.Rect(150, rect_gap, 300, 50), 5))
         size_text = font.render (f'{i}x{i}', False, 'Blue')
         size_rect = size_text.get_rect(center = (300,size_gap))
-        size_array.append(f'{i}x{i}')
+        size_array.append(i)
         screen.blit(size_text, size_rect)
         rect_gap += 70
         size_gap += 70
