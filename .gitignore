@@ -2,3 +2,7 @@
 venv/
 env/
 my_env/
+
+# Ignore py caches
+__pycache__/
+*.pyc
