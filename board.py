@@ -13,9 +13,9 @@ def boardToArray(size, board_rect, case_w, case_h):
 
     for row in range (size):
         for col in range(size):
-            x = board_rect.left + row * case_w + case_w // 2
-            y = board_rect.top + col * case_h + case_h // 2
-            board_array[row][col] = (x, y)
+            x = board_rect.left + col * case_w + case_w // 2
+            y = board_rect.top + row * case_h + case_h // 2
+            board_array[col][row] = (x, y)
     return board_array
 
 def board_init(screen, size):

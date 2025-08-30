@@ -32,7 +32,7 @@ class Knight(pygame.sprite.Sprite):
         col = self.x
         row = self.y
 
-        self.legal = moves.knightMoves(row, col, state_array, size)
+        self.legal = moves.knightMoves(col, row, state_array, size)
 
         for nx, ny in self.legal:
             pixel_x = self.board_rect.left + nx * case_w

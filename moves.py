@@ -1,4 +1,4 @@
-def knightMoves(y, x, state, size):
+def knightMoves(x, y, state, size):
     moves = [
         (-2, 1), (-2, -1),
         (2, 1), (2, -1),
