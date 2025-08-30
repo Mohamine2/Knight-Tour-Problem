@@ -44,6 +44,7 @@ class Knight(pygame.sprite.Sprite):
     def legal_moves(self):
 
         # Get the knight's position on the board_array
+        #Get the knight's position in board_array
         col = self.x
         row = self.y
 
