@@ -1,21 +1,6 @@
 import pygame
 import moves
-
-def press_button(rect, size):
-        mouse_pos = pygame.mouse.get_pos()
-        mouse_pressed = pygame.mouse.get_pressed()
-
-        if rect[0].collidepoint(mouse_pos) and mouse_pressed[0]:
-            return True, size[0][0]
-        
-        elif rect[1].collidepoint(mouse_pos) and mouse_pressed[0]:
-            return True, size[1][0]
-
-        elif rect[2].collidepoint(mouse_pos) and mouse_pressed[0]:
-            return True, size[2][0]
-        
-        else:
-            return False, None
+import menu
 
 def getCaseSize(board, size):
     width, height = board.get_size()
@@ -58,7 +43,7 @@ class Knight(pygame.sprite.Sprite):
 
     def legal_moves(self):
 
-        # Récupère la position du cavalier en indices de grille
+        # Get the knight's position on the board_array
         col = self.x
         row = self.y
 
@@ -77,8 +62,6 @@ class Knight(pygame.sprite.Sprite):
             self.dragging = True
 
         if not mouse_pressed[0] and self.dragging:
-            # Quand on relâche → snap sur la case
-            
             self.snap_to_grid(mouse_pos)
             self.dragging = False
 
@@ -120,7 +103,6 @@ screen = pygame.display.set_mode((600,600))
 pygame.display.set_caption('Knight Tour Problem')
 clock = pygame.time.Clock()
 running = False
-font = pygame.font.Font('font/Pixeltype.ttf', 50)
 
 while True:
     for event in pygame.event.get():
@@ -135,31 +117,7 @@ while True:
         knight.update()
         draw_visited(size)
     else:
-        screen.fill((94,129,162))
-        title_text = font.render('KNIGHT TOUR PROBLEM', False, 'Black')
-        title_rect = title_text.get_rect(center = (300,130))
-        screen.blit(title_text, title_rect)
-
-        size_text = font.render ('Choose the chessboard size', False, 'Blue')
-        size_rect = size_text.get_rect(center = (300,200))
-        screen.blit(size_text, size_rect)
-
-
-        rect_array = []
-        size_array = []
-        rect_gap = 230
-        size_gap = 260
-        for i in range(3, 6):
-            rect_array.append(pygame.draw.rect(screen, 'Black', pygame.Rect(150, rect_gap, 300, 50), 5))
-            size_text = font.render (f'{i}x{i}', False, 'Blue')
-            size_rect = size_text.get_rect(center = (300,size_gap))
-            size_array.append(f'{i}x{i}')
-            screen.blit(size_text, size_rect)
-            rect_gap += 70
-            size_gap += 70
-
-        running, size = press_button(rect_array, size_array)
-
+        running, size = menu.menu_display(screen)
 
         if running:
             background_surface = pygame.image.load('sprites/background.png')
