@@ -36,7 +36,7 @@ def menu_display(screen,):
     for i in range(3, 6):
         rect_array.append(pygame.draw.rect(screen, 'Black', pygame.Rect(150, rect_gap, 300, 50), 5))
         size_text = font.render (f'{i}x{i}', False, 'Blue')
-        size_rect = size_text.get_rect(center = (300,size_gap))
+        size_rect = size_text.get_rect(center = (300, size_gap))
         size_array.append(i)
         screen.blit(size_text, size_rect)
         rect_gap += 70

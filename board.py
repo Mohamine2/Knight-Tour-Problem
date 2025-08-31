@@ -2,19 +2,26 @@ import pygame
 
 pygame.init()
 
-def getCaseSize(board, size):
-    width, height = board.get_size()
-    width /= size
-    height /= size
-    return width, height
+class Board:
+    def __init__(self, board_rect, size):
+        self.size = size
+        self.board_rect = board_rect
+        self.case_w = board_rect.width // self.size
+        self.case_h = board_rect.height // self.size
 
-def boardToArray(size, board_rect, case_w, case_h):
-    board_array = [[None for _ in range(size)] for _ in range(size)]
+        #State array (0 = 'normal case' 1 = 'visited case')
+        self.state_array = [[0 for _ in range(self.size)] for _ in range(self.size)]
 
-    for row in range (size):
-        for col in range(size):
-            x = board_rect.left + col * case_w + case_w // 2
-            y = board_rect.top + row * case_h + case_h // 2
+        self.board_array = boardToArray(self)
+
+
+def boardToArray(board):
+    board_array = [[None for _ in range(board.size)] for _ in range(board.size)]
+
+    for row in range (board.size):
+        for col in range(board.size):
+            x = board.board_rect.left + col * board.case_w + board.case_w // 2
+            y = board.board_rect.top + row * board.case_h + board.case_h // 2
             board_array[col][row] = (x, y)
     return board_array
 
@@ -27,11 +34,7 @@ def board_init(screen, size):
 
     board_rect = scaled_board.get_rect(center = (screen.get_width()//2, screen.get_height()//2))
 
-    case_w, case_h = getCaseSize(scaled_board, size)
-    board_array = boardToArray(size, board_rect, case_w, case_h)
+    board = Board(board_rect, size)
 
-    #State array (0 = 'normal case' 1 = 'visited case')
-    state_array = [[0 for _ in range(size)] for _ in range(size)]
-
-    return background_surface, scaled_board, board_rect, case_w, case_h, board_array, state_array
+    return background_surface, scaled_board, board
 			

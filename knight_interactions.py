@@ -4,42 +4,42 @@ import moves
 pygame.init()
 
 #Mark the visited cases
-def draw_visited(screen, size, state_array, board_rect, case_w, case_h):
-    for row in range(size):
-        for col in range(size):
-            if state_array[row][col] == 1:
-                pixel_x = board_rect.left + row * case_w
-                pixel_y = board_rect.top + col * case_h
-                pygame.draw.rect(screen, (0, 255, 0), pygame.Rect(pixel_x, pixel_y, case_w, case_h), 5)
+def draw_visited(screen, board):
+    for row in range(board.size):
+        for col in range(board.size):
+            if board.state_array[row][col] == 1:
+                pixel_x = board.board_rect.left + row * board.case_w
+                pixel_y = board.board_rect.top + col * board.case_h
+                pygame.draw.rect(screen, (0, 255, 0), pygame.Rect(pixel_x, pixel_y, board.case_w, board.case_h), 5)
 
 
 class Knight(pygame.sprite.Sprite):
-    def __init__(self, board_rect,state_array, board_array, case_w, case_h):
+    def __init__(self, board):
         super().__init__()
         self.surface = pygame.image.load('sprites/knight.png').convert_alpha()
-        self.knight_width, self.knight_height = case_w, case_h
+        self.knight_width, self.knight_height = board.case_w, board.case_h
         self.image = pygame.transform.scale(self.surface, ( self.knight_width, self.knight_height))
         self.x = 0
         self.y = 0
-        state_array[self.x][self.y] = 1
-        self.rect = self.image.get_rect(center = board_array[self.x][self.y])
+        board.state_array[self.x][self.y] = 1
+        self.rect = self.image.get_rect(center = board.board_array[self.x][self.y])
         self.dragging = False
-        self.board_rect = board_rect
+        self.board_rect = board.board_rect
 
-    def legal_moves(self, screen, state_array, size, case_w, case_h):
+    def legal_moves(self, screen, board):
 
         # Get the knight's position on the board_array
         col = self.x
         row = self.y
 
-        self.legal = moves.knightMoves(col, row, state_array, size)
+        self.legal = moves.knightMoves(col, row, board.state_array, board.size)
 
         for nx, ny in self.legal:
-            pixel_x = self.board_rect.left + nx * case_w
-            pixel_y = self.board_rect.top + ny * case_h
-            pygame.draw.rect(screen, (255, 0, 0), pygame.Rect(pixel_x, pixel_y, case_w, case_h), 5)     
+            pixel_x = self.board_rect.left + nx * board.case_w
+            pixel_y = self.board_rect.top + ny * board.case_h
+            pygame.draw.rect(screen, (255, 0, 0), pygame.Rect(pixel_x, pixel_y, board.case_w, board.case_h), 5)     
 
-    def drag_and_drop(self, case_w, case_h, state_array, board_array, size):
+    def drag_and_drop(self, board):
         mouse_pos = pygame.mouse.get_pos()
         mouse_pressed = pygame.mouse.get_pressed()
 
@@ -47,48 +47,46 @@ class Knight(pygame.sprite.Sprite):
             self.dragging = True
 
         if not mouse_pressed[0] and self.dragging:
-            self.snap_to_grid(mouse_pos, case_w, case_h, state_array, board_array, size)
+            self.snap_to_grid(mouse_pos, board)
             self.dragging = False
 
         if self.dragging:
             self.rect.center = mouse_pos
 
-    def snap_to_grid(self, pos, case_w, case_h, state_array, board_array, size):
-
-        size = int(size)
+    def snap_to_grid(self, pos, board):
         
         #Find the center of the nearest case
-        x = int((pos[0] - self.board_rect.left) // case_w)
-        y = int((pos[1] - self.board_rect.top) // case_h)
+        x = int((pos[0] - self.board_rect.left) // board.case_w)
+        y = int((pos[1] - self.board_rect.top) // board.case_h)
 
         #Check if it is a legal case
         if (x,y) in self.legal:
             self.x = x
             self.y = y
-            state_array[x][y] = 1
+            board.state_array[x][y] = 1
 
         #Border Limits
-        if self.x > size - 1:
-            self.x = size - 1
+        if self.x > board.size - 1:
+            self.x = board.size - 1
         if self.x < 0:
             self.x = 0
-        if self.y > size - 1:
-            self.y = size - 1
+        if self.y > board.size - 1:
+            self.y = board.size - 1
         if self.y < 0:
             self.y = 0
 
-        self.rect.center = board_array[self.x][self.y]
+        self.rect.center = board.board_array[self.x][self.y]
     
-    def update(self, screen, state_array, board_array, size, case_w, case_h):
-        self.legal_moves(screen, state_array, size, case_w, case_h)
-        self.drag_and_drop(case_w, case_h, state_array, board_array, size)
+    def update(self, screen, board):
+        self.legal_moves(screen, board)
+        self.drag_and_drop(board)
 
 
 knight = pygame.sprite.GroupSingle()
 
-def knight_init(board_rect,state_array, board_array, case_w, case_h):
-    knight.add(Knight(board_rect,state_array, board_array, case_w, case_h))
+def knight_init(board):
+    knight.add(Knight(board))
 
-def knight_update(screen, state_array, board_array, size, case_w, case_h):
+def knight_update(screen, board):
     knight.draw(screen)
-    knight.update(screen, state_array, board_array, size, case_w, case_h)
+    knight.update(screen, board)
