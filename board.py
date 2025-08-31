@@ -10,7 +10,7 @@ class Board:
         self.case_h = board_rect.height // self.size
 
         #State array (0 = 'normal case' 1 = 'visited case')
-        self.state_array = [[0 for _ in range(self.size)] for _ in range(self.size)]
+        self.state_array = [[(0,0) for _ in range(self.size)] for _ in range(self.size)]
 
         self.board_array = boardToArray(self)
 

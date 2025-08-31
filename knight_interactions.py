@@ -2,15 +2,17 @@ import pygame
 import moves
 
 pygame.init()
+font = pygame.font.Font('font/Pixeltype.ttf', 50)
 
 #Mark the visited cases
 def draw_visited(screen, board):
     for row in range(board.size):
         for col in range(board.size):
-            if board.state_array[row][col] == 1:
-                pixel_x = board.board_rect.left + row * board.case_w
-                pixel_y = board.board_rect.top + col * board.case_h
-                pygame.draw.rect(screen, (0, 255, 0), pygame.Rect(pixel_x, pixel_y, board.case_w, board.case_h), 5)
+            state, index = board.state_array[row][col]
+            if state == 1:
+                number_text = font.render (f'{index}', False, 'Black')
+                number_rect = number_text.get_rect(center = (board.board_array[row][col]))
+                screen.blit(number_text, number_rect)
 
 
 class Knight(pygame.sprite.Sprite):
@@ -21,7 +23,8 @@ class Knight(pygame.sprite.Sprite):
         self.image = pygame.transform.scale(self.surface, ( self.knight_width, self.knight_height))
         self.x = 0
         self.y = 0
-        board.state_array[self.x][self.y] = 1
+        self.index = 1
+        board.state_array[self.x][self.y] = (1,self.index)
         self.rect = self.image.get_rect(center = board.board_array[self.x][self.y])
         self.dragging = False
         self.board_rect = board.board_rect
@@ -63,7 +66,8 @@ class Knight(pygame.sprite.Sprite):
         if (x,y) in self.legal:
             self.x = x
             self.y = y
-            board.state_array[x][y] = 1
+            self.index += 1
+            board.state_array[x][y] = (1,self.index)
 
         #Border Limits
         if self.x > board.size - 1:

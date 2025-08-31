@@ -1,6 +1,6 @@
 import pygame
 
-pygame.font.init()
+pygame.init()
 font = pygame.font.Font('font/Pixeltype.ttf', 50)
 
 def press_button(rect, size):
