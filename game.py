@@ -20,7 +20,7 @@ while True:
     if running:
         screen.blit(background_surface, (0,0))
         screen.blit(scaled_board, board_infos.board_rect)
-        knight_interactions.knight_update(screen, board_infos)
+        running = knight_interactions.knight_update(screen, board_infos)
         knight_interactions.draw_visited(screen, board_infos)
     else:
         running, size = menu.menu_display(screen)

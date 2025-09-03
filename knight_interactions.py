@@ -13,6 +13,7 @@ def draw_visited(screen, board):
                 number_text = font.render (f'{index}', False, 'Black')
                 number_rect = number_text.get_rect(center = (board.board_list[row][col]))
                 screen.blit(number_text, number_rect)
+        
 
 
 class Knight(pygame.sprite.Sprite):
@@ -28,6 +29,7 @@ class Knight(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(center = board.board_list[self.row][self.col])
         self.dragging = False
         self.board_rect = board.board_rect
+        self.running = None
 
     def legal_moves(self, screen, board):
 
@@ -76,11 +78,23 @@ class Knight(pygame.sprite.Sprite):
             self.row = 0
 
         self.rect.center = board.board_list[self.row][self.col]
+
+    def isWin(self, board):
+        if self.index == 1:
+            return True
+        if self.index == board.size*board.size:
+            print("Gagné")
+            return False
+        elif not self.legal:
+            print("Perdu")
+            return False
+        else:
+            return True
     
     def update(self, screen, board):
         self.legal_moves(screen, board)
         self.drag_and_drop(board)
-
+        self.running = self.isWin(board)
 
 knight = pygame.sprite.GroupSingle()
 
@@ -90,3 +104,5 @@ def knight_init(board):
 def knight_update(screen, board):
     knight.draw(screen)
     knight.update(screen, board)
+    running = knight.sprite.running
+    return running

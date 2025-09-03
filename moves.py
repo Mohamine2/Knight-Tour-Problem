@@ -9,7 +9,7 @@ def knightMoves(y, x, state, size):
     legal_positions = []
 
     for dy, dx in moves:
-        ny, nx = y + dy, y + dx
+        ny, nx = y + dy, x + dx
         if 0 <= nx < size and 0 <= ny < size:
             if state[ny][nx][0] == 0:
                 legal_positions.append((ny, nx))
