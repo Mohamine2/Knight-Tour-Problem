@@ -8,10 +8,10 @@ font = pygame.font.Font('font/Pixeltype.ttf', 50)
 def draw_visited(screen, board):
     for row in range(board.size):
         for col in range(board.size):
-            state, index = board.state_array[row][col]
+            state, index = board.state_list[row][col]
             if state == 1:
                 number_text = font.render (f'{index}', False, 'Black')
-                number_rect = number_text.get_rect(center = (board.board_array[row][col]))
+                number_rect = number_text.get_rect(center = (board.board_list[row][col]))
                 screen.blit(number_text, number_rect)
 
 
@@ -21,25 +21,21 @@ class Knight(pygame.sprite.Sprite):
         self.surface = pygame.image.load('sprites/knight.png').convert_alpha()
         self.knight_width, self.knight_height = board.case_w, board.case_h
         self.image = pygame.transform.scale(self.surface, ( self.knight_width, self.knight_height))
-        self.x = 0
-        self.y = 0
+        self.row = 0
+        self.col = 0
         self.index = 1
-        board.state_array[self.x][self.y] = (1,self.index)
-        self.rect = self.image.get_rect(center = board.board_array[self.x][self.y])
+        board.state_list[self.row][self.col] = (1,self.index)
+        self.rect = self.image.get_rect(center = board.board_list[self.row][self.col])
         self.dragging = False
         self.board_rect = board.board_rect
 
     def legal_moves(self, screen, board):
 
-        # Get the knight's position on the board_array
-        col = self.x
-        row = self.y
+        self.legal = moves.knightMoves(self.row, self.col, board.state_list, board.size)
 
-        self.legal = moves.knightMoves(col, row, board.state_array, board.size)
-
-        for nx, ny in self.legal:
-            pixel_x = self.board_rect.left + nx * board.case_w
-            pixel_y = self.board_rect.top + ny * board.case_h
+        for nrow, ncol in self.legal:
+            pixel_x = self.board_rect.left + ncol * board.case_w
+            pixel_y = self.board_rect.top + nrow * board.case_h
             pygame.draw.rect(screen, (255, 0, 0), pygame.Rect(pixel_x, pixel_y, board.case_w, board.case_h), 5)     
 
     def drag_and_drop(self, board):
@@ -58,28 +54,28 @@ class Knight(pygame.sprite.Sprite):
 
     def snap_to_grid(self, pos, board):
         
-        #Find the center of the nearest case
-        x = int((pos[0] - self.board_rect.left) // board.case_w)
-        y = int((pos[1] - self.board_rect.top) // board.case_h)
+        #Calculate the center of the nearest case
+        col = int((pos[0] - self.board_rect.left) // board.case_w)
+        row = int((pos[1] - self.board_rect.top) // board.case_h)
 
         #Check if it is a legal case
-        if (x,y) in self.legal:
-            self.x = x
-            self.y = y
+        if (row,col) in self.legal:
+            self.row = row
+            self.col = col
             self.index += 1
-            board.state_array[x][y] = (1,self.index)
+            board.state_list[row][col] = (1,self.index)
 
         #Border Limits
-        if self.x > board.size - 1:
-            self.x = board.size - 1
-        if self.x < 0:
-            self.x = 0
-        if self.y > board.size - 1:
-            self.y = board.size - 1
-        if self.y < 0:
-            self.y = 0
+        if self.col > board.size - 1:
+            self.col = board.size - 1
+        if self.col < 0:
+            self.col = 0
+        if self.row > board.size - 1:
+            self.row = board.size - 1
+        if self.row < 0:
+            self.row = 0
 
-        self.rect.center = board.board_array[self.x][self.y]
+        self.rect.center = board.board_list[self.row][self.col]
     
     def update(self, screen, board):
         self.legal_moves(screen, board)

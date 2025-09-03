@@ -29,20 +29,20 @@ def menu_display(screen,):
     size_rect = size_text.get_rect(center = (300,200))
     screen.blit(size_text, size_rect)
 
-    rect_array = []
-    size_array = []
+    rect_list = []
+    size_list = []
     rect_gap = 230
     size_gap = 260
     for i in range(5, 8):
-        rect_array.append(pygame.draw.rect(screen, 'Black', pygame.Rect(150, rect_gap, 300, 50), 5))
+        rect_list.append(pygame.draw.rect(screen, 'Black', pygame.Rect(150, rect_gap, 300, 50), 5))
         size_text = font.render (f'{i}x{i}', False, 'Blue')
         size_rect = size_text.get_rect(center = (300, size_gap))
-        size_array.append(i)
+        size_list.append(i)
         screen.blit(size_text, size_rect)
         rect_gap += 70
         size_gap += 70
 
-    running, size = press_button(rect_array, size_array)
+    running, size = press_button(rect_list, size_list)
 
     return running, size
     
