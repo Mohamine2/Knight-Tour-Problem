@@ -16,12 +16,16 @@ while True:
         if event.type == pygame.QUIT:
             pygame.quit()
             exit()
+        if running:
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                running = False
+
 
     if running:
         screen.blit(background_surface, (0,0))
         screen.blit(scaled_board, board_infos.board_rect)
-        running = knight_interactions.knight_update(screen, board_infos)
         knight_interactions.draw_visited(screen, board_infos)
+        knight_interactions.knight_update(screen, board_infos)
     else:
         running, size = menu.menu_display(screen)
 

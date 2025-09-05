@@ -79,22 +79,31 @@ class Knight(pygame.sprite.Sprite):
 
         self.rect.center = board.board_list[self.row][self.col]
 
-    def isWin(self, board):
-        if self.index == 1:
-            return True
-        if self.index == board.size*board.size:
-            print("Gagné")
-            return False
+    def isWin(self, screen, board):
+        if self.index != 1 and self.index == board.size*board.size:
+            pygame.draw.rect(screen, (94,129,162), pygame.Rect(100, 200, 390, 150))
+            lose_text_1 = font.render ("All cases visited.", False, 'Blue')
+            lose_text_2 = font.render ("Congratulations !", False, 'Blue')
+            lose_rect_1 = lose_text_1.get_rect(center = (300, 250))
+            lose_rect_2 = lose_text_2.get_rect(center = (300, 300))
+            screen.blit(lose_text_1, lose_rect_1)
+            screen.blit(lose_text_2, lose_rect_2)
         elif not self.legal:
-            print("Perdu")
-            return False
-        else:
-            return True
-    
+            pygame.draw.rect(screen, (94,129,162), pygame.Rect(100, 200, 390, 200))
+            lose_text_1 = font.render ("No legal moves.", False, 'Blue')
+            lose_text_2 = font.render ("Please press space", False, 'Blue')
+            lose_text_3 = font.render ("to go back to the menu.", False, 'Blue')
+            lose_rect_1 = lose_text_1.get_rect(center = (300, 250))
+            lose_rect_2 = lose_text_2.get_rect(center = (300, 300))
+            lose_rect_3 = lose_text_3.get_rect(center = (300, 350))
+            screen.blit(lose_text_1, lose_rect_1)
+            screen.blit(lose_text_2, lose_rect_2)
+            screen.blit(lose_text_3, lose_rect_3)
+        
     def update(self, screen, board):
         self.legal_moves(screen, board)
         self.drag_and_drop(board)
-        self.running = self.isWin(board)
+        self.isWin(screen, board)
 
 knight = pygame.sprite.GroupSingle()
 
@@ -104,5 +113,3 @@ def knight_init(board):
 def knight_update(screen, board):
     knight.draw(screen)
     knight.update(screen, board)
-    running = knight.sprite.running
-    return running
