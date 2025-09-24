@@ -2,6 +2,7 @@ import pygame
 import menu
 import board
 import knight_interactions
+import solver
         
 
 #Pygame initialization
@@ -26,6 +27,8 @@ while True:
         screen.blit(scaled_board, board_infos.board_rect)
         knight_interactions.draw_visited(screen, board_infos)
         knight_interactions.knight_update(screen, board_infos)
+        # solver.backtrack(1, size, board_infos.state_list, 0, 0)
+
     else:
         running, size = menu.menu_display(screen)
 

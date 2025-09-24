@@ -80,7 +80,7 @@ class Knight(pygame.sprite.Sprite):
         self.rect.center = board.board_list[self.row][self.col]
 
     def isWin(self, screen, board):
-        if self.index != 1 and self.index == board.size*board.size:
+        if self.index == board.size*board.size:
             pygame.draw.rect(screen, (94,129,162), pygame.Rect(100, 200, 390, 150))
             lose_text_1 = font.render ("All cases visited.", False, 'Blue')
             lose_text_2 = font.render ("Congratulations !", False, 'Blue')
