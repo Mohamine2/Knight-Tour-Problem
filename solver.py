@@ -8,14 +8,14 @@ def backtrack(i, size, state, knight):
 
     legal = moves.knightMoves(knight.row, knight.col, state, size)
 
-    for ny, nx in legal:
-        state[ny][nx] = (1,i)
-        knight.row = ny
-        knight.col = nx
-        knight.index = i
+    for nrow, ncol in legal:
+        state[nrow][ncol] = (1,i+1)
+        knight.row = nrow
+        knight.col = ncol
+        knight.index = i+1
         if backtrack(i+1,size, state, knight):
             return True
-        state[ny][nx] = (0,0)
+        state[nrow][ncol] = (0,0)
 
     return False
         

@@ -85,7 +85,7 @@ class Knight(pygame.sprite.Sprite):
         mouse_pressed = pygame.mouse.get_pressed()
 
         if mouse_pressed[1]: #Press the mouse scroll wheel to use the Backtracking method
-            solver.backtrack(2, board.size, board.state_list, self)
+            print(f"{solver.backtrack(1, board.size, board.state_list, self)}\n")
 
     def isWin(self, screen, board):
         if self.index == board.size*board.size:
