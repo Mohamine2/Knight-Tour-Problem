@@ -1,5 +1,6 @@
 import pygame
 import moves
+import solver
 
 pygame.init()
 font = pygame.font.Font('font/Pixeltype.ttf', 50)
@@ -78,6 +79,13 @@ class Knight(pygame.sprite.Sprite):
             self.row = 0
 
         self.rect.center = board.board_list[self.row][self.col]
+    
+    def autoSolve(self, board):
+        mouse_pos = pygame.mouse.get_pos()
+        mouse_pressed = pygame.mouse.get_pressed()
+
+        if mouse_pressed[1]: #Press the mouse scroll wheel to use the Backtracking method
+            solver.backtrack(1, board.size, board.state_list, self)
 
     def isWin(self, screen, board):
         if self.index == board.size*board.size:
@@ -103,6 +111,7 @@ class Knight(pygame.sprite.Sprite):
     def update(self, screen, board):
         self.legal_moves(screen, board)
         self.drag_and_drop(board)
+        self.autoSolve(board)
         self.isWin(screen, board)
 
 knight = pygame.sprite.GroupSingle()
